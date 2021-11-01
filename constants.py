@@ -2,6 +2,8 @@ SYMBOLS = ("X", "O")
 
 END_GAME = ('Y', 'N')
 
+LOG_FILE = 'logger.txt'
+
 COMP_NAMES = [
     "R2D2",
     "C3PO",
