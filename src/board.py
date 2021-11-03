@@ -1,4 +1,4 @@
-def get_board(size):
+def init_board(size):
     return [[0 for _ in range(size)] for _ in range(size)]
 
 def board_match(board):
