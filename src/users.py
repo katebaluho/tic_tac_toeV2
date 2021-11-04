@@ -1,16 +1,20 @@
 import random
 
-from constants import USER_TEMPLATE, COMP_NAMES, SYMBOLS
+from src.constants import USER_TEMPLATE, COMP_NAMES, SYMBOLS
+from src.read_argv import TERMINAL_PARAMS
 
 
-def create_user(symbol) -> dict:
+def create_user(symbol, name) -> dict:
     user = {}
-    for itm in USER_TEMPLATE:
-        user[itm[0]] = itm[1](symbol=symbol, mode = "USER")
+    for idx, itm in enumerate(USER_TEMPLATE):
+        if name and idx == 0:
+            user[itm[0]] = name if name else itm[1]
+        else:
+            user[itm[0]] = itm[1](symbol=symbol, mode = "USER")
     return user
 
 
-def create_comp(symbol) -> dict:
+def create_comp(symbol, name) -> dict:
     return {
         "name": random.choice(COMP_NAMES),
         "symbol": symbol,
@@ -25,8 +29,8 @@ MODES = {
 }
 
 
-def get_user(mode, symbol) -> dict:
-    return MODES[mode]["creator"](symbol=symbol)
+def get_user(mode, symbol, name) -> dict:
+    return MODES[mode]["creator"](symbol=symbol, name = name)
 
 
 def ask_mode() -> str:
@@ -46,12 +50,13 @@ def ask_mode() -> str:
         continue
 
 
-def create_users(mode, **exist_gamevar) -> list[dict]:
-    if exist_gamevar:
-        return [exist_gamevar['user'], get_user(mode, symbol = 'O')]
-    else:
-        users = []
-        for symbol, mode in zip(SYMBOLS, ("USER", mode)):
-            user = get_user(mode, symbol)
-            users.append(user)
+def create_users(mode) -> list[dict]:
+    users = []
+    names = TERMINAL_PARAMS['names']
+    if len(names) == 1:
+        names.append('')
+
+    for symbol, mode, name in zip(SYMBOLS, ("USER", mode), names):
+        user = get_user(mode, symbol, name)
+        users.append(user)
     return users
