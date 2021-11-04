@@ -22,6 +22,9 @@ USER_TEMPLATE = (
 )
 
 
+DELIMETER = '|'
+
+
 FILE_HANDLERS = {
     "GAME_NUM": os.path.join(LOG_FOLDER, "game_num_inc"),
     "INIT_GAME": os.path.join(LOG_FOLDER, "game_init"),

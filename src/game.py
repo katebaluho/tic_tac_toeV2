@@ -1,10 +1,11 @@
 from itertools import cycle
 from src.constants import END_GAME
 from src.board import init_board, board_match, print_board, draw_match_board
-from src.logger import log_init_game, log_game_steps, log_end_game, update_session
+from src.logger import update_session, log_message
 from src.read_argv import read_terminal, TERMINAL_PARAMS
 from src.steps import user_step, comp_step
 from src.users import ask_mode, create_users
+from datetime import datetime
 
 
 MODES_STEP = {
@@ -24,28 +25,30 @@ def game_init():
         "session": update_session("GAME_NUM"),
         "round": 1,
         "mode" : mode,
-        "users": create_users(mode)
+        "users": create_users(mode),
+        "start_time": datetime.now().ctime()
     }
     return gamevars
 
-def game_cycle(board: list[list], mode:str, users: list[dict, ...], round: int, session: int):
+def game_cycle(board: list[list], mode:str, users: list[dict, ...], round: int, session: int, start_time):
+    print('session', session)
     names = [elem['name'] for elem in users]
-    log_init_game(session, round, mode, names)
+    log_message("INIT_GAME", session, round, mode, *names, start_time)
 
     for step_num, user in enumerate(cycle(users), 1):
         print_board(board)
 
         print(f"Ход №{step_num}.Игрок {user['name']}")
         step = MODES_STEP[user['mode']]['get_step'](user, board)
-        log_game_steps(session, round, user['name'], step_num, step)
+        log_message("GAME_STEP",session, round, user['name'], step_num, *step)
 
         if board_match(board):
             print(f"Победил {user['name']} на ходу {step_num}\n")
-            log_end_game(session, round, user['name'], "WIN")
+            log_message("END_GAME",session, round, user['name'], "WIN")
             break
         if draw_match_board(step_num, board):
             print(f"Ничья на ходу {step_num}\n")
-            log_end_game(session, round, user['name'], "DRAW")
+            log_message("END_GAME",session, round, user['name'], "DRAW")
             break
 
 
